@@ -5,16 +5,24 @@ import json
 from dotenv import load_dotenv
 
 
-def main():
+def main() -> None:
     load_dotenv()
 
-    username = os.environ.get("USERNAME")
-    host = os.environ.get("HOST")
+    username: str = os.environ.get("USERNAME", "")
+    host: str = os.environ.get("HOST", "")
 
-    with open("program.json") as f:
-        program = json.load(f)
-        name = program["name"]
-        f.close()
+    if not username or not host:
+        print("Please provide a username and host in the .env file.")
+        exit(1)
+
+    try:
+        with open("program.json") as f:
+            program: dict = json.load(f)
+            name: str = program["name"]
+            f.close()
+    except FileNotFoundError:
+        print("Please provide a program.json file.")
+        exit(1)
 
     os.system(f"scp -r ./src {username}@{host}:/mojo/program/{name}/")
     os.system(f"scp program.json {username}@{host}:/mojo/program/{name}/")
