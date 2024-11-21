@@ -1,0 +1,10 @@
+{
+    "id": "muse-python",
+    "name": "muse-python",
+    "description": "Test program for Python with Muse",
+    "disabled": false,
+    "provider": "python",
+    "scope": "",
+    "script": "./src/app.py",
+    "envvars": {}
+}

@@ -1,0 +1,7 @@
+[project]
+name = "muse-python"
+version = "0.1.0"
+description = "Test project to experiment using Python with Muse"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
