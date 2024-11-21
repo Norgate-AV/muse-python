@@ -18,5 +18,8 @@ wheels/
 # Muse Specific
 .local
 
+# MyPy cache
+.mypy_cache/
+
 # Requirements
 requirements.txt
