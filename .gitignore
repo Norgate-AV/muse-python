@@ -9,8 +9,14 @@ wheels/
 # Virtual environments
 .venv
 
+# Environment variables
+.env
+
 # Local History
 .history/
 
 # Muse Specific
 .local
+
+# Requirements
+requirements.txt

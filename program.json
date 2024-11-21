@@ -5,6 +5,6 @@
     "disabled": false,
     "provider": "python",
     "scope": "",
-    "script": "./src/app.py",
+    "script": "src/app.py",
     "envvars": {}
 }

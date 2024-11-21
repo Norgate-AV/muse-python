@@ -4,3 +4,11 @@ jsconfig.json
 mojo
 README.md
 pyproject.toml
+deploy.py
+uv.lock
+.env
+.gitignore
+.gitattributes
+.python-version
+.venv
+.mypy-cache
