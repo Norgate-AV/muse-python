@@ -30,6 +30,11 @@ def main() -> None:
     os.system(f"uv pip freeze > requirements.txt")
     os.system(f"scp requirements.txt {username}@{host}:/mojo/program/{name}/")
 
+    # Restart the program
+    # os.system(
+    # f'ssh {username}@{host} "program:restart {program}"'
+    # )  # This kills all current ssh sessions. Need to find a better way to restart the program.
+
 
 if __name__ == "__main__":
     main()
