@@ -1,13 +1,13 @@
 from mojo import context  # type: ignore
 import cowsay  # type: ignore
 from Timer import Timer
+from utils import get_ip
 
 
 def main() -> None:
     context.log.info("Hello from muse-python!")
-    context.log.info("This is a simple example of a muse-python app.")
 
-    message: str = "Hello from muse-python!"
+    message: str = f"Your IP address is: {get_ip()}"
     say: str = cowsay.get_output_string("cow", message)
 
     context.log.info(f"\n{say}\n")
@@ -17,7 +17,6 @@ def main() -> None:
 
 
 def on_tick(event) -> None:
-    context.log.info("Tick!")
     context.log.info(f'Timeline Sequence: {event.arguments["sequence"]}')
     context.log.info(f'Timeline Time: {event.arguments["time"]}')
     context.log.info(f'Timeline Repetition: {event.arguments["repetition"]}')
