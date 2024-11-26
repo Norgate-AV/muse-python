@@ -8,12 +8,14 @@ from dotenv import load_dotenv
 def main() -> None:
     load_dotenv()
 
-    username: str = os.environ.get("USERNAME", "")
+    username: str = os.environ.get("USER", "")
     host: str = os.environ.get("HOST", "")
 
     if not username or not host:
         print("Please provide a username and host in the .env file.")
         exit(1)
+
+    print(f"Deploying to {username}@{host}")
 
     try:
         with open("program.json") as f:
