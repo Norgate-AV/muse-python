@@ -38,6 +38,6 @@ class context:
     services: Services
 
     @staticmethod
-    def run(globals: Callable) -> None: ...
+    def run(globals: dict[str, Any]) -> None: ...
 
 __all__ = ["context"]
