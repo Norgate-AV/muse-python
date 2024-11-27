@@ -1,6 +1,7 @@
 from typing import List
 from lib.Enova import Enova
 from mojo import context  # type: ignore
+from lib.UserInterface import UserInterface
 
 # from typing import TYPE_CHECKING
 # import cowsay  # type: ignore
@@ -20,7 +21,6 @@ PAGE_LOGO: int = 0
 PAGE_MAIN: int = 1
 
 pages: List[str] = ["Logo", "Main"]
-
 
 required_page: int = 0
 required_popup: int = 0
@@ -63,6 +63,24 @@ sources: List[dict] = [
 ]
 
 
+def ui_online_status_change_event(event) -> None:
+    print_event(event)
+
+    # inspect the event object
+    for prop in dir(event):
+        # if not prop.startswith("__"):
+        context.log.info(f"{prop}: {getattr(event, prop)}")
+    # context.log.info("Registering Touch Panel Events")
+
+    for source in sources:
+        context.log.info(f"Registering Source: {source['name']}")
+        tp.port[source["port"]].button[source["channel"]].watch(on_source_select)
+
+    tp.port[1].button[1].watch(on_touch_to_start)
+
+    # panel_reset()
+
+
 def main() -> None:
     context.log.info("Hello from muse-python!")
 
@@ -71,46 +89,50 @@ def main() -> None:
 
     # context.log.info(f"\n{say}\n")
 
-    tl_feedback = Timer()
-    tl_feedback.start(on_tl_feedback_tick)
+    # tl_feedback = Timer()
+    # tl_feedback.start(on_tl_feedback_tick)
 
-    enova = Enova()
-    enova.switch(1, 2, 0)
-    enova.switch(2, 3, 1)
-    enova.switch(3, 4, 2)
+    # enova = Enova()
+    # enova.switch(1, 2, 0)
+    # enova.switch(2, 3, 1)
+    # enova.switch(3, 4, 2)
 
-    display.online(lambda _: context.log.info("Display Online"))
-    display.offline(lambda _: context.log.info("Display Offline"))
+    # display.online(lambda _: context.log.info("Display Online"))
+    # display.offline(lambda _: context.log.info("Display Offline"))
 
-    tp.online(on_tp_online)
-    tp.offline(lambda _: context.log.info("Touch Panel Offline"))
-
-
-def on_tp_online(event: dict) -> None:
-    context.log.info("Registering Touch Panel Events")
-
-    for source in sources:
-        tp.port[source["port"]].button[source["channel"]].watch(on_source_select)
-
-    panel_reset()
+    # tp.online(on_tp_online)
+    # tp.offline(lambda _: context.log.info("Touch Panel Offline"))
 
 
-def on_source_select(event: dict) -> None:
+def on_touch_to_start(event) -> None:
+    if not event.value:
+        return
+
+    print_event(event)
+
+    global required_page
+
+    context.log.info("Touch to Start")
+
+    required_page = PAGE_MAIN
+
+    panel_refresh()
+
+
+def on_source_select(event) -> None:
+    if not event.value:
+        return
+
+    print_event(event)
+
     global selected_source, required_popup
 
-    context.log.info(f"Source Selected: {event}")
+    context.log.info(f"Source Selected: {event.id}")
 
-    selected_source = event["channel"]
+    selected_source = event.id
     required_popup = selected_source
 
-    panel_refresh()
-
-
-def panel_reset() -> None:
-    tp.port[1].send_command("@PPX")
-    tp.port[1].send_command("ADBEEP")
-
-    panel_refresh()
+    ui.show_popup(sources[selected_source]["popup"])
 
 
 def panel_refresh() -> None:
@@ -129,10 +151,27 @@ def panel_refresh() -> None:
 
 def on_tl_feedback_tick(_) -> None:
     for source in sources:
-        tp.port[source["port"]].button[source["channel"]] = (
+        tp.port[source["port"]].channel[source["channel"]] = (
             selected_source == source["channel"]
         )
 
+
+def print_event(event) -> None:
+    context.log.info(f"Event ID: {event.id}")
+    context.log.info(f"Event Path: {event.path if hasattr(event, 'path') else ''}")
+    context.log.info(f"Event Source: {event.source}")
+    context.log.info(f"Event Value: {event.value if hasattr(event, 'value') else ''}")
+    context.log.info(
+        f"Event Args: {event.arguments if hasattr(event, 'arguments') else ''}"
+    )
+    context.log.info(
+        f"Event Old Value: {event.oldValue if hasattr(event, 'oldValue') else ''}"
+    )
+
+
+ui = UserInterface(tp)
+ui.online_status_change.append(ui_online_status_change_event)
+ui.register()
 
 if __name__ == "__main__":
     main()
